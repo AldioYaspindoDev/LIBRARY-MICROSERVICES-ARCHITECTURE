@@ -1,0 +1,37 @@
+services:
+  # Service 1: Zookeeper (Manajer untuk Kafka)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.3
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  # Service 2: Kafka Broker (Pekerja utama)
+  kafka:
+    image: confluentinc/cp-kafka:7.5.3
+    container_name: kafka
+    depends_on:
+      - zookeeper  # Pastikan Zookeeper jalan duluan
+    ports:
+      # Port 9092 adalah yang akan diakses oleh aplikasi Spring Boot Anda
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # Bonus Service 3: Kafdrop (Web UI untuk memantau Kafka)
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    depends_on:
+      - kafka # Pastikan Kafka jalan duluan
+    ports:
+      # Anda bisa akses UI ini dari browser di port 19000
+      - "19000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
