@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: PEMINJAMAN-SERVICE
+  # ========== COMMAND DATABASE (PostgreSQL) ==========
+  datasource:
+    url: jdbc:postgresql://localhost:5432/peminjaman_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: dioiwaonen
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  # ========== KAFKA CONFIG ==========
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: peminjaman-service-group
+      auto-offset-reset: earliest
+  # ========== QUERY DATABASE (MongoDB) ==========
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/peminjaman_db
+  # ========== RabitMq =========================== 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    template:
+      exchange: order.exchange
+    listener:
+      simple:
+        default-requeue-rejected: false
+#Mail YAML Structure 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: m.aldioyaspindo@gmail.com
+    password: vecl jmds atnu xfup
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+app:
+  rabbitmq:
+    queue: peminjaman.queue
+    exchange: peminjaman.exchange
+    routing-key: buku.routing.key
+logging:
+  level:
+    com.aldio.rabbitmq: DEBUG
+server:
+  port: 8083

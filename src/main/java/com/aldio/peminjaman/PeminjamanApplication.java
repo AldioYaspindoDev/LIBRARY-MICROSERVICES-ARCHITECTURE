@@ -12,7 +12,6 @@ public class PeminjamanApplication {
 		SpringApplication.run(PeminjamanApplication.class, args);
 	}
 
-	
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
