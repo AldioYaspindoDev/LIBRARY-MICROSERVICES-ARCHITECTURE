@@ -50,7 +50,7 @@ public class BukuCommand implements Serializable {
     private LocalDateTime processedAt;
 
     // Field ini hanya untuk proses pengiriman event ke Kafka, tidak disimpan di DB
-    @Transient // PERBAIKAN: Anotasi agar field ini tidak dipetakan ke kolom database
+    @Transient // PERBAIKAN: Anotasi agar field in+i tidak dipetakan ke kolom database
     private EventType eventType;
 
     public enum EventType {

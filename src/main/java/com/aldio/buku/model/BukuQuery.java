@@ -44,7 +44,7 @@ public class BukuQuery implements Serializable {
 
     @Override
     public String toString() {
-        // PERBAIKAN: Mengganti nama kelas dari "Order" menjadi "BukuQuery"
+        // PERBAIKAN: Menwaery"
         return "BukuQuery{" +
                 "id=" + id +
                 ", judul buku='" + judul + '\'' +

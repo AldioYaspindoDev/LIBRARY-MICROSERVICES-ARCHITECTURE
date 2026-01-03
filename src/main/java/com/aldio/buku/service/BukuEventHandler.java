@@ -17,7 +17,7 @@ public class BukuEventHandler {
     private final BukuQueryRepository bukuQueryRepository;
 
     // PERBAIKAN: Anotasi @Transactional dihapus karena tidak relevan untuk logika ini di MongoDB
-    @KafkaListener(topics = "buku-events", groupId = "query-service-group")
+    @KafkaListener(topics = "buku-events", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(BukuCommand event) {
         if (event == null || event.getId() == null || event.getEventType() == null) {
             log.warn("Menerima event tidak valid (null, tanpa ID, atau tanpa tipe event), pesan diabaikan.");

@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
-
 import java.time.LocalDateTime;
 
 @Service
@@ -22,17 +21,15 @@ public class BukuCommandService {
 
     public BukuCommand createBuku(BukuCommand buku) {
         // 1. Buat ID unik menggunakan UUID dan set ke objek buku
-        buku.setId(UUID.randomUUID().toString()); // <-- TAMBAHKAN BARIS INI
-
+        buku.setId(UUID.randomUUID().toString());
         buku.setCreatedAt(LocalDateTime.now());
 
-        // SEKARANG AMAN, karena buku.getId() sudah memiliki nilai
+        // Simpan ke PostgreSQL (Command Database)
         BukuCommand saved = bukuCommandRepository.save(buku);
 
-        // ... sisa kode
+        // Kirim event ke Kafka dengan error handling
         saved.setEventType(BukuCommand.EventType.CREATED);
-        kafkaTemplate.send(TOPIC, saved);
-        log.info("Published CREATED event to Kafka for ID: {}", saved.getId());
+        publishEventToKafka(saved);
 
         return saved;
     }
@@ -51,10 +48,9 @@ public class BukuCommandService {
 
         BukuCommand updated = bukuCommandRepository.save(buku);
 
-        // Set event type sebelum dikirim ke Kafka
+        // Kirim event ke Kafka dengan error handling
         updated.setEventType(BukuCommand.EventType.UPDATED);
-        kafkaTemplate.send(TOPIC, updated);
-        log.info("Published UPDATED event to Kafka for ID: {}", updated.getId());
+        publishEventToKafka(updated);
 
         return updated;
     }
@@ -67,12 +63,38 @@ public class BukuCommandService {
         log.info("Buku dengan ID {} berhasil dihapus dari PostgreSQL", id);
 
         // Buat event khusus untuk delete
-        BukuCommand deleteEvent = new BukuCommand();
+        BukuCommand deleteE vent = new BukuCommand();
         deleteEvent.setId(id);
         deleteEvent.setEventType(BukuCommand.EventType.DELETED);
 
         // Kirim event delete ke Kafka
-        kafkaTemplate.send(TOPIC, deleteEvent);
-        log.info("Published DELETED event to Kafka for ID: {}", id);
+        publishEventToKafka(deleteEvent);
+    }
+
+    /**
+     * Helper method untuk mengirim event ke Kafka dengan error handling.
+     * Menggunakan message key (ID) untuk menjaga ordering per entity.
+     */
+    private void publishEventToKafka(BukuCommand event) {
+        try {
+            // Menggunakan ID sebagai key untuk menjaga ordering per entity
+            kafkaTemplate.send(TOPIC, event.getId(), event)
+                    .whenComplete((result, ex) -> {
+                        if (ex == null) {
+                            log.info("✅ Published {} event to Kafka for ID: {} | Partition: {} | Offset: {}",
+                                    event.getEventType(),
+                                    event.getId(),
+                                    result.getRecordMetadata().partition(),
+                                    result.getRecordMetadata().offset());
+                        } else {
+                            log.error("❌ Failed to publish {} event to Kafka for ID: {}",
+                                    event.getEventType(), event.getId(), ex);
+                            // TODO: Implement retry mechanism atau simpan ke dead letter queue
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("❌ Exception saat mengirim event ke Kafka untuk ID: {}", event.getId(), e);
+            // TODO: Implement fallback mechanism (misalnya Outbox Pattern)
+        }
     }
 }

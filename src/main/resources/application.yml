@@ -7,17 +7,12 @@ spring:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      # PERBAIKAN: Gunakan JsonSerializer untuk mengirim objek Java sebagai JSON
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
+      # Group ID digunakan oleh KafkaListener
       group-id: buku-service-group
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      # PERBAIKAN: Gunakan JsonDeserializer dan konfigurasikan agar Spring tahu cara membaca JSON kembali ke objek Java
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*" # Atau spesifik ke "com.aldio.buku.model"
-        spring.json.value.default.type: com.aldio.buku.model.BukuCommand
+      # NOTE: Deserializer dikonfigurasi di KafkaConsumerConfig.java
 
   # ================= COMMAND SIDE DATABASE (POSTGRESQL) =================
   datasource:
@@ -58,4 +53,3 @@ logging:
 
 server:
   port: 8081
-
