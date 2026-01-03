@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity // PERBAIKAN: Anotasi untuk JPA (PostgreSQL)
+@Entity
 @Table(name = "peminjaman") 
 public class PeminjamanCommand implements Serializable{
     
