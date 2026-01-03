@@ -2,9 +2,9 @@ package com.aldio.pengembalian.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.aldio.pengembalian.model.Pengembalian;
+import com.aldio.pengembalian.model.PengembalianCommand;
 
 @Repository
-public interface PengembalianRepository extends JpaRepository<Pengembalian, Long> {
+public interface PengembalianCommandRepository extends JpaRepository<PengembalianCommand, String> {
     
 }

@@ -1,26 +1,26 @@
 package com.aldio.pengembalian.vo;
 
-import com.aldio.pengembalian.model.Pengembalian;
+import com.aldio.pengembalian.model.PengembalianCommand;
 
 public class ResponseTemplate {
-    private Pengembalian pengembalian;
+    private PengembalianCommand pengembalian;
     private Peminjaman peminjaman;
 
     public ResponseTemplate(){
 
     }
 
-    public ResponseTemplate(Pengembalian pengembalian, Peminjaman peminjaman){
+    public ResponseTemplate(PengembalianCommand pengembalian, Peminjaman peminjaman){
         this.pengembalian = pengembalian;
         this.peminjaman = peminjaman;
     }
 
 
-    public Pengembalian getPengembalian() {
+    public PengembalianCommand getPengembalian() {
         return pengembalian;
     }
 
-    public void setPengembalian(Pengembalian pengembalian) {
+    public void setPengembalian(PengembalianCommand pengembalian) {
         this.pengembalian = pengembalian;
     }
 
