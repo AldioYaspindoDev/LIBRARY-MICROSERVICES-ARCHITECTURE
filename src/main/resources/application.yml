@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: ANGGOTA-SERVICE
+
+  # ========== COMMAND DATABASE (PostgreSQL) ==========
+  datasource:
+    url: jdbc:postgresql://localhost:5432/anggota_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: dioiwaonen
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  # ========== KAFKA CONFIG ==========
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: anggota-service-group
+      auto-offset-reset: earliest
+  # ========== QUERY DATABASE (MongoDB) ==========
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/anggota_db
+  # ========== RabitMq =========================== 
+
+server:
+  port: 8082
